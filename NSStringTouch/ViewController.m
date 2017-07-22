@@ -8,6 +8,9 @@
 
 #import "ViewController.h"
 
+#define kLinkValue_car    @"action1://"
+#define kLinkValue_driver @"action1://"
+
 @interface ViewController ()<UITextViewDelegate>
 
 @end
@@ -18,57 +21,43 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    /*
-     将连接替换成文字，实现点击方法,字体的颜色是蓝色的，怎么设置字体颜色为红色呢？
-     */
     
+    // 1、NSMutableAttributedString
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:@"《拼车搭乘协议》不可点击的文字组成部分《司机公约》"];
+    //设置富文本的效果，将可点击的部分设置成链接
     [attributedString addAttribute:NSLinkAttributeName
-                             value:@"action1://"
+                             value:kLinkValue_car
                              range:[[attributedString string] rangeOfString:@"《拼车搭乘协议》"]];
     [attributedString addAttribute:NSLinkAttributeName
-                             value:@"action2://"
+                             value:kLinkValue_driver
                              range:[[attributedString string] rangeOfString:@"《司机公约》"]];
-    NSDictionary *linkAttributes = @{NSForegroundColorAttributeName: [UIColor redColor]};
+    NSDictionary *linkAttributes                = @{NSForegroundColorAttributeName: [UIColor redColor]};
     
-    
-    UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 200, self.view.frame.size.width, 100)];
+    // 2、UITextView
+    UITextView *textView        = [[UITextView alloc] initWithFrame:CGRectMake(0, 200, self.view.frame.size.width, 100)];
     textView.linkTextAttributes = linkAttributes;
-    textView.attributedText = attributedString;
-    textView.font = [UIFont systemFontOfSize:15.0];
-    textView.textAlignment = NSTextAlignmentCenter;
-    textView.editable = NO;
-    textView.delegate = self;
-    [textView sizeToFit];
+    textView.attributedText     = attributedString;
+    textView.font               = [UIFont systemFontOfSize:15.0];
+    textView.textAlignment      = NSTextAlignmentCenter;
+    textView.editable           = NO;
+    textView.delegate           = self;
     [self.view addSubview:textView];
 }
 
+
 - (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange
 {
-//    if ((characterRange.location == 0) && (characterRange.length == 8)) {
-//        NSLog(@"拼车搭乘协议");
-//    }
-//    
-//    if ((characterRange.location == 19) && (characterRange.length == 8)) {
-//        NSLog(@"叮叮司机公约");
-//    }
-
-    if ([URL.absoluteString isEqualToString:@"action1://"]) {
-    
+    //通过URL的absoluteString属性区分点击事件，并在此实现点击事件即可
+    if ([URL.absoluteString isEqualToString:kLinkValue_car])
+    {
         NSLog(@"拼车搭乘协议");
-        
         return NO;
     }
-    
-    
-    if ([URL.absoluteString isEqualToString:@"action2://"]) {
-        
+    if ([URL.absoluteString isEqualToString:kLinkValue_driver])
+    {
         NSLog(@"司机公约");
-        
         return NO;
     }
-
-    
     return YES;
 }
 
